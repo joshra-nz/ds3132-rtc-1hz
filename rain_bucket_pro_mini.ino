@@ -129,23 +129,18 @@ void writeToSD(const String& data) {
 //--------------SEND DATA LORA--------------//
 void transmitDataViaLoRa(uint32_t epochTime, float sensorWorkingTime, float hourlyRainfall, float dailyRainfall, int rawBucketTips, float batteryVoltage) {
   // Begin a new LoRa packet for transmission
-  LoRa.beginPacket();
-  // Send epoch time
-  LoRa.print(epochTime);
+  LoRa.beginPacket(); 
+  LoRa.print(epochTime); // Send epoch time
   LoRa.print(",");
-  // Send sensor working time
-  LoRa.print(sensorWorkingTime);
+  LoRa.print(sensorWorkingTime); // Send sensor working time
   LoRa.print(",");
-  // Send rainfall data: 1-hour rainfall and total rainfall
-  LoRa.print(hourlyRainfall);
+  LoRa.print(hourlyRainfall); // Send rainfall data: 1-hour rainfall and total rainfall
   LoRa.print(",");
   LoRa.print(dailyRainfall);
   LoRa.print(",");
-  // Send bucket tips count
-  LoRa.print(rawBucketTips);
+  LoRa.print(rawBucketTips); // Send bucket tips count
   LoRa.print(",");
-  // Send battery level
-  LoRa.print(batteryVoltage, 2);
+  LoRa.print(batteryVoltage, 2);// Send battery level
   // End packet transmission and check if it was successful
   int transmissionStatus = LoRa.endPacket();
   if (transmissionStatus != 1) {
