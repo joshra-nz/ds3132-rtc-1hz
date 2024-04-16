@@ -8,8 +8,8 @@
 DFRobot_RainfallSensor_I2C Sensor(&Wire); // Initialize the Rainfall Sensor with the I2C interface
 
 #define RFM95_FREQ 915E6  // Set the frequency to 915 MHz
+RTC_DS3231 rtc; // Create an instance of the RTC_DS3231 class to interact with the RTC
 
-// Define LoRa module pins
 const int LoRa_CS = 8; // Chip Select pin for LoRa module
 const int LoRa_RST = 9; // Reset pin for LoRa module
 const int LoRa_IRQ = 2; // Interrupt pin for LoRa module
@@ -19,10 +19,7 @@ const int SD_CS = 10; // Define the chip select pin for the SD card module
 
 const int V_Batt = A2;  // V_Batt Analog input pin A2 1V1 max
 
-RTC_DS3231 rtc; // Create an instance of the RTC_DS3231 class to interact with the RTC
-
 bool debugMode = true; // Set to false to disable serial debug messages
-
 
 //--------------SETUP ROUTINE--------------//
 void setup() {
@@ -99,15 +96,13 @@ void debugPrintln(const String &message) {
 
 //--------------READ BATTERY LEVEL--------------//
 float readBatteryLevel() {
-
-  int avgSamples = 10;  // Number of samples averaged for analogue inputs
   // 10K/82K=1/9.2 Input divider
   // 1.092V*9.2=10.0464V Full scale - *1.092V is measured Vref
   // = 0.0099538143V/bit theory
   // V/bit seems to be most accurate
   const float VBattScale = 0.009766;
-  
   float voltage = 0.0;  // Clear old value
+  int avgSamples = 10;  // Number of samples averaged for analogue inputs
   for (int x = 0; x < avgSamples; x++) {  // Average multiple readings
     voltage = (analogRead(V_Batt) + voltage);
   }
@@ -136,9 +131,9 @@ void transmitDataViaLoRa(uint32_t epochTime, float sensorWorkingTime, float hour
   LoRa.print(",");
   LoRa.print(sensorWorkingTime); // Send sensor working time
   LoRa.print(",");
-  LoRa.print(hourlyRainfall); // Send rainfall data: 1-hour rainfall and total rainfall
+  LoRa.print(hourlyRainfall); // Send rainfall data from the last hour
   LoRa.print(",");
-  LoRa.print(dailyRainfall);
+  LoRa.print(dailyRainfall); // Send rainfall data from the last 24 hours
   LoRa.print(",");
   LoRa.print(rawBucketTips); // Send bucket tips count
   LoRa.print(",");
