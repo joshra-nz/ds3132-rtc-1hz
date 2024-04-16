@@ -18,12 +18,6 @@ const int LoRa_EN = ??;
 const int SD_CS = 10; // Define the chip select pin for the SD card module
 
 const int V_Batt = A2;  // V_Batt Analog input pin A2 1V1 max
-int avgSamples = 10;  // Number of samples averaged for analogue inputs
-// 10K/82K=1/9.2 Input divider
-// 1.092V*9.2=10.0464V Full scale - *1.092V is measured Vref
-// = 0.0099538143V/bit theory
-// V/bit seems to be most accurate
-const float VBattScale = 0.009766;
 
 RTC_DS3231 rtc; // Create an instance of the RTC_DS3231 class to interact with the RTC
 
@@ -105,6 +99,14 @@ void debugPrintln(const String &message) {
 
 //--------------READ BATTERY LEVEL--------------//
 float readBatteryLevel() {
+
+  int avgSamples = 10;  // Number of samples averaged for analogue inputs
+  // 10K/82K=1/9.2 Input divider
+  // 1.092V*9.2=10.0464V Full scale - *1.092V is measured Vref
+  // = 0.0099538143V/bit theory
+  // V/bit seems to be most accurate
+  const float VBattScale = 0.009766;
+  
   float voltage = 0.0;  // Clear old value
   for (int x = 0; x < avgSamples; x++) {  // Average multiple readings
     voltage = (analogRead(V_Batt) + voltage);
